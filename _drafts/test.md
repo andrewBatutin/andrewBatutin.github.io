@@ -55,6 +55,7 @@ According to ISO 9126 SQALE defines next Quality Model’s Characteristics
 | Changeability   |
 | Reliability     |
 | Testability     |
+{:.mbtablestyle}
 
 
 According to CTL project necessities Expert Team has defined next
@@ -71,6 +72,7 @@ priorities for the Quality Characteristics
 | Changeability   | 6                   |
 | Reliability     | 5                   |
 | Testability     | 2                   |
+{:.mbtablestyle}
 
 
 So Reliability characteristics are the most important one. And
@@ -81,7 +83,7 @@ Pyramid was formed:
 
 **Technical Debt Pyramid**
 
-![My helpful screenshot](/media/sonar_pur.png)
+![Sonar Pyramid](/media/sonar_pur.png)
 
 Quality Characteristics Priority can be changed according to the
 Business needs of the project.
@@ -130,6 +132,7 @@ Industrial standard rules set were taken as a baseline.
 | 19      | Dodgy - Unchecked/unconfirmed cast                                                  | n/a          |
 | 20      | Security - JSP reflected cross site scripting vulnerability                         | n/a          |
 | 21      | Security - Servlet reflected cross site scripting vulnerability                     | n/a          |
+{:.mbtablestyle}
 
 **Reviewed Web Rules:**
 
@@ -147,6 +150,7 @@ Industrial standard rules set were taken as a baseline.
 | 10      | "defaults" should be a function when objects or arrays are used            | n/a          |
 | 11      | The "changed" property should not be manipulated directly                  | Major        |
 | 12      | "!important" annotation should be placed at the end of the declaration     | Blocker      |
+{:.mbtablestyle}
 
 
 **Reviewed iOS Rules:**
@@ -186,6 +190,7 @@ Industrial standard rules set were taken as a baseline.
 | 31      | Feature envy                                            | n/a          |
 | 32      | High cyclomatic complexity                              | Critical     |
 | 33      | Constant if expression                                  | Critical     |
+{:.mbtablestyle}
 
 The reviewed rule’s severity is going to determine the priority of the
 related Technical Debt “interest payment”.
@@ -226,6 +231,7 @@ Debt Ratio:
 | C                | 10% - 20%                |
 | D                | 20% - 50%                |
 | E                | 50% - 100%               |
+{:.mbtablestyle}
 
 The relationship is the industrial standard set by SonarQube.
 
@@ -255,4 +261,3 @@ Reference Documents
 
   [The SQALE Method Definition Document; Author: Jean-Louis Letouzey Version: 1.0 January 27, 2012](http://www.sqale.org/wp-content/uploads/2010/08/SQALE-Method-EN-V1-0.pdf)
   [The SQALE method for evaluating Technical Debt; Letouzey, J.-L.](http://www.sqale.org/wp-content/uploads/2012/04/SQALE-3RD-WS-on-MTD.pdf)
-  
