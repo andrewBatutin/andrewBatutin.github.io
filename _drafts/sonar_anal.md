@@ -1,239 +1,267 @@
 ---
 layout: post
-title:  "Swift and KVC"
-date:   2014-12-06 22:13:00
-categories: swift
+title:  "SonarQube Quality Metrics Review"
+date:   2016-08-05 00:00:00
+categories: static code analysis
 ---
-###1. Introduction
-Lately my colleague _M.D._ and I has a conversation about Swift and Objective C. One of his points was Swift lacks some libraries and frameworks we've used to. One of them is KVC with it marvelous [**collections operators**](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/KeyValueCoding/Articles/CollectionOperators.html). He claimed that there is no way I can write as small and neat code to work with hairy JSON structure with Swift like he has done it with Objective-C KVC mechanism. My response was instant. I've asked him to show me his JSON and what was he doing with it with KVC. And I've started to write same part of code but with Swift.  
 
-###2. JSON structure
-I won't show whole JSON structure case it's to big and clumsy. Part that we are interested in looks smthng like that
- {% highlight json %}
-{  
-    "jsonStructure":[  
-        {  
-            "topLevelCollection":[  
-                {  
-                    "oneStepDownCollection":[  
-                        {  
-                            "twoStepDownCollection":[  
-                                {  
-                                    "threeStepDownCollection":[  
-                                        {  
-                                            "articleID":1
-                                        },
-                                        {  
-                                            "articleID":2
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
-}
- {% endhighlight %}
-So we've got that deep layered JSON arrays and our task is to get all the **articleId** values from all the elements at all the levels of the JSON structure. We don't care about an order or uniqueness of the id's. We just need to get all of them.
+Prefrace
+------------
 
-###3. ObjC way 
-The Objective C solution we are comparing to looks like that:
-{% highlight objc %}
-// Collect all article ID
-NSArray *allArticleId = [parsedJsonStructure valueForKeyPath:@"topLevelCollection.@unionOfArrays.oneStepDownCollection.@unionOfArrays.twoStepDownCollection.@unionOfArrays.threeStepDownCollection.articleID"];
-// as a result we've got all the articles id in the parsedJsonStructure
-{% endhighlight %}
-As you can see we indeed has a one line of code to do the job. 
-Let's see what I've came up with using Swift
- 
-###4. Swift way  
+Below you can find sample of how SonarQube service can be calibrated for a need of a specific project. 
 
-At the beginning I've described JSON structure with next model:
- {% highlight swift %}
-public struct TopLevelCollection{
-    let oneStepDownCollection:[OneStepDownCollection]
-}
+Introduction
+------------
 
-public struct OneStepDownCollection{
-    let twoStepDownCollection:[TwoStepDownCollection]
-}
+SonarQube is using SQALE **(Software Quality Assessment based on
+Lifecycle Expectations)** model in order to determine quality of the
+source code.
 
-public struct TwoStepDownCollection{
-    let threeStepDownCollection:[ThreeStepDownCollection]
-}
+Main characteristic of the SQALE model are:
 
-public struct ThreeStepDownCollection{
-    let articleID:String
-}
- {% endhighlight %}
-Quite simple, isn't it.  
-Next i moved to a function to manipulate with this model.
+-   The SQALE Quality Model is based on ISO 9126
+
+-   The SQALE Method’s Quality Model takes the software’s lifecycle
+    into account.  
+
+-   The SQALE method provides common language to all teams. Its metrics
+    can be used for any technology. And analysis results are comparable.
+
+According to the SQALE each organization has to define it’s own concrete
+definition of the right code. As well as calibrate the metrics to adjust
+project-specific parameters.
+
+In this document next SQALE elements will be reviewed taking in account
+Vodoo project requirements:
+
+-   SQALE Technical Debt Pyramid
+
+-   Platform specific rules Severity
+
+-   SQALE Rating definition
+
+Reviewing procedure was done by Expert Team. Expert Team consisted from
+iOS, Android, Web domains experts and Vodoo management staff.
+
+SQALE Technical Debt Pyramid
+----------------------------
+
+According to ISO 9126 SQALE defines next Quality Model’s Characteristics
 
 
-As far as a know Swift has a inferred type system and somewhat lacks of ObjC dynamic nature to implement KVC - like behavior. But instead Swift has some very interesting [**Functional Programming**](http://www.raywenderlich.com/82599/swift-functional-programming-tutorial) tools to work with collections. And one of them if **reduce** function. If you take a look at function declaration you'll see
- 
- {% highlight swift %}
- func reduce<U>(initial: U, combine: (U, T) -> U) -> U
- {% endhighlight %}
-
- So if you supply to the reduce function initial value **U** and closure **(U, T) -> U** reduce function will "reduce" your collection to the one value using this closure and initial value.  
- 
-
- And if we'll take empty array **[]** as initial value and closure to create a union of arrays and put all that to reduce function - then we'll get **@unionOfArrays** equivalent at Swift.  
- 
-
- Union of array closure for the **twoStepDownCollection** looks like that
- {% highlight swift %}
- let res = oneStepDownCollection.reduce([]){$0 + $1.twoStepDownCollection}
-                    .reduce([]){$0 + $1.threeStepDownCollection}
-                    .map({$0.articleID})
- {% endhighlight %}
- **$0** - stands for the initial value  
- **$1** - stands for the element in corresponding array.
- 
- Let's me try to describe what's is going on with an example
- {% highlight c %}
- // Imagine we have next data structure
- oneStepDownCollection
-        |
-        |
-        -[twoStepDownCollection1, twoStepDownCollection2]
-                |                           |
-                |                           |
-                |                           -[threeStepDownCollection3, threeStepDownCollection4]
-                |                                       |                           |
-                |                                       |                           |
-                |                                       |                           -[article7, article8]
-                |                                       |                                   |       |
-                |                                       |                                   |       |
-                |                                       |                                   |       - articleID : "articleID8"
-                |                                       |                                   |
-                |                                       |                                   - articleID : "articleID7"
-                |                                       |
-                |                                       |
-                |                                       -[article5, article6]
-                |                                             |       |
-                |                                             |       |
-                |                                             |       - articleID : "articleID6"
-                |                                             |
-                |                                             - articleID : "articleID5"
-                |
-                |
-                -[threeStepDownCollection1, threeStepDownCollection2, ...]
-                            |                           |
-                            |                           |
-                            |                           -[article3, article4]
-                            |                                   |       |
-                            |                                   |       |
-                            |                                   |       - articleID : "articleID4"
-                            |                                   |
-                            |                                   - articleID : "articleID3"
-                            |
-                            -[article1, article2]
-                                    |       |
-                                    |       - articleID : "articleID2"
-                                    |
-                                    - articleID : "articleID1"
- {% endhighlight %}
-And let's start from the bottom.  
+| **Name**            |
+|-----------------|
+| Reusability     |
+| Portability     |
+| Maintainability |
+| Security        |
+| Efficiency      |
+| Changeability   |
+| Reliability     |
+| Testability     |
+{:.mbtablestyle}
 
 
- Map function applies closure to each element of the collection. And returns collection of the elements transformed by the closure. So we'll have next effect:  
- {% highlight swift %}
-        .map({$0.articleID})
- // will result at converting of array
- [article1, article2]
- // to array of actual string values
- ["articleID1", "articleID2"]
- {% endhighlight %} 
- **map** function will be applied to all the articleID arrays at **threeStepDownCollection** collections level.
- And at all upcoming functions we'll work with strings values
+According to Vodoo project necessities Expert Team has defined next
+priorities for the Quality Characteristics
 
 
-After mapping we go to reduce part.  
- {% highlight swift %}
-                    .reduce([]){$0 + $1.threeStepDownCollection}
- {% endhighlight %}
- does next:  
-
- * On first iteration it takes as initial value empty array **[]** (represented by **$0** in closure) and 1st element of the **threeStepDownCollection** array (represented as **$1** in closure). And concatenates them together with **+** operator like that:  
- {% highlight swift %}
- [] + ["articleID1", "articleID2"] 
- // result is ["articleID1", "articleID2"] 
- {% endhighlight %}
- * On second iteration initial value **$0** now is equal to **["articleID1", "articleID2"]**. And we add to initial value now second element of the array **threeStepDownCollection**:
- {% highlight swift %}
- ["articleID1", "articleID2"] + ["articleID3", "articleID4"] 
- // result is ["articleID1", "articleID2", "articleID3", "articleID4"] 
- {% endhighlight %}
-
- On the next level we have 
- {% highlight swift %}
-                    .reduce([]){$0 + $1.twoStepDownCollection}
- {% endhighlight %}
- And that line works like that:
-
- * On the first iteration initial value **$0** if **[]**. And **$1.twoStepDownCollection** element will be result of our previous reduce function **["articleID1", "articleID2", "articleID3", "articleID4"]**.  After concatenation we'll have:  
- {% highlight swift %}
- [] + ["articleID1", "articleID2", "articleID3", "articleID4"] 
- // result is [articleID1, "articleID2", "articleID3", "articleID4"] 
- {% endhighlight %}
- * On second iteration initial value **$0** will be **["articleID1", "articleID2", "articleID3", "articleID4"]**. And the **$1.twoStepDownCollection** value will stand for result of reduction of **[threeStepDownCollection3, threeStepDownCollection4]** array. In other words it will be **["articleID5", "articleID6", "articleID7", "articleID8"]**.  
- So we will reduce next arrays:
- {% highlight swift %}
- ["articleID1", "articleID2", "articleID3", "articleID4"] + ["articleID5", "articleID6", "articleID7", "articleID8"]
- // result is ["articleID1", "articleID2", "articleID5", "articleID6", "articleID7", "articleID8"]
- {% endhighlight %}
-
- And we there! We've got list of all the articles from all the elements of our data structure!
+| **Name**        | **Priority (0-10)** |
+|:---------------:|:-------------------:|
+| Reusability     | 10                  |
+| Portability     | 9                   |
+| Maintainability | 8                   |
+| Security        | 7                   |
+| Efficiency      | 7                   |
+| Changeability   | 6                   |
+| Reliability     | 5                   |
+| Testability     | 2                   |
+{:.mbtablestyle}
 
 
-####Full Solution
- All in all i've ended up with this line of code to work with targeted JSON structure:
- {% highlight swift %}
- let allArticleId = parsedJsonStructure.reduce([]){$0 + $1.topLevelCollection}
-				.reduce([]){$0 + $1.oneStepDownCollection}
-				.reduce([]){$0 + $1.twoStepDownCollection}
-                                .reduce([]){$0 + $1.threeStepDownCollection}
-				.map({$0.articleID})
- //same effect as ObjC code
- {% endhighlight %}
+So Reliability characteristics are the most important one. And
+Portability is the least important one.
 
- As you can see it's really on line of code to do the job.
+According the Prioritized Quality Characteristics next Technical Debt
+Pyramid was formed:
 
-###5. Bencmark  
-According to fantastic article [**Let's Build Key-Value Coding by Mike Ash**](https://www.mikeash.com/pyblog/friday-qa-2013-02-08-lets-build-key-value-coding.html) there are quite a lot of stuff going on behind the slim KVC facade. And I've had a hope that Swift reduce will run actually faster than ObjC version. So my colleague _M.D._ and I have decided to run a little benchmark to compare Swift vs ObjC solutions. And here what we've got.
+**Technical Debt Pyramid**
 
-First of all we've used **Apple iPad mini 16GB Wi-Fi + Cellular** to run our tests.  
+![Sonar Pyramid](/media/sonar_pur.png)
+
+Quality Characteristics Priority can be changed according to the
+Business needs of the project.
+
+Each Quality Characteristics has platform specific rules set associated
+with it. And they will be reviewed next.
+
+Platform Specific Rules Set Severity Review
+-------------------------------------------
+
+Each Quality Characteristics has platform specific rules set associated
+with it. And violations of these rules are used as an input to calculate
+Technical Debt of the project.
+
+Also each rule has its severity. And the severity depends on Quality
+Characteristic type of the specific rule. In general higher Priority of
+the rule’s Quality Characteristic type - higher it’s severity should be.
+
+According to the above-mentioned criteria the Expert Team has reviewed
+existing rule’s severity for iOS, Android, Web platforms.
+
+Industrial standard rules set were taken as a baseline.
+
+**Reviewed Android Rules:**
+
+| **No.** |                                      **Name **                                      | **Severity** |
+|---------|-----------------------------------------------------------------------------------|--------------|
+| 1       | Classes should not be loaded dynamically                                            | Blocker      |
+| 2       | Web applications should not have a "main" method                                    | n/a          |
+| 3       | Exceptions should not be thrown from servlet methods                                | n/a          |
+| 4       | Untrusted data should not be stored in sessions                                     | n/a          |
+| 5       | Return values should not be ignored when function calls don't have any side effects | Major        |
+| 6       | Non-serializable classes should not be written                                      | n/a          |
+| 7       | Fields in a "Serializable" class should either be transient or serializable         | n/a          |
+| 8       | Servlets should not have mutable instance fields                                    | n/a          |
+| 9       | HttpServletRequest.getRequestedSessionId() should not be used                       | n/a          |
+| 10      | Mutable members should not be stored or returned directly                           | Major        |
+| 11      | PreparedStatement and "ResultSet" methods should be called with valid indices       | n/a          |
+| 12      | Instance methods should not write to "static" fields                                | Major        |
+| 13      | Calendars and "DateFormats" should not be static                                    | Major        |
+| 14      | read and "readLine" return values should be used                                    | Critical     |
+| 15      | Throwable.printStackTrace(...) should not be called                                 | Minor        |
+| 16      | Dodgy - Immediate dereference of the result of readLine()                           | Major        |
+| 17      | Security - Servlet reflected cross site scripting vulnerability                     | n/a          |
+| 18      | Correctness - An apparent infinite recursive loop                                   | Blocker      |
+| 19      | Dodgy - Unchecked/unconfirmed cast                                                  | n/a          |
+| 20      | Security - JSP reflected cross site scripting vulnerability                         | n/a          |
+| 21      | Security - Servlet reflected cross site scripting vulnerability                     | n/a          |
+{:.mbtablestyle}
+
+**Reviewed Web Rules:**
+
+| **No.** |                                  **Name **                                 | **Severity** |
+|---------|--------------------------------------------------------------------------|--------------|
+| 1       | JSF expressions should be syntactically valid                              | n/a          |
+| 2       | "autocomplete" should be set to "off" on input elements of type "password" | Major        |
+| 3       | Javascript scriptlets should not have too many lines of code               | Major        |
+| 4       | Web pages should not contain absolute URIs                                 | Minor        |
+| 5       | Dynamic includes should not be used                                        | n/a          |
+| 6       | Disallowed "taglibs" should not be used                                    | n/a          |
+| 7       | Function calls should not pass extra arguments                             | Major        |
+| 8       | A "for" loop update clause should move the counter in the right direction  | Major        |
+| 9       | Values should not be uselessly incremented                                 | Major        |
+| 10      | "defaults" should be a function when objects or arrays are used            | n/a          |
+| 11      | The "changed" property should not be manipulated directly                  | Major        |
+| 12      | "!important" annotation should be placed at the end of the declaration     | Blocker      |
+{:.mbtablestyle}
 
 
-For Swift Compiler I've used **-Ounchecked** optimisation level. For LLVM Code generation optimization **-Ofast** level. Which I suppose the fastest optimization settings possible.  
-ObjC version also was compiled against release settings. So it also should be fastest one.  
+**Reviewed iOS Rules:**
 
+| **No.** | **Name **                                               | **Severity** |
+|---------|---------------------------------------------------------|--------------|
+| 1       | Too many parameters                                     | Major        |
+| 2       | Non case label in switch statement                      | Blocker      |
+| 3       | Empty else block                                        | Critical     |
+| 4       | Goto statement                                          | Blocker      |
+| 5       | Default label not last in switch statement              | Blocker      |
+| 6       | Parameter reassignment                                  | Critical     |
+| 7       | Replace with object subscripting                        | Major        |
+| 8       | Replace with boxed expression                           | Major        |
+| 9       | Unnecessary else statement                              | Blocker      |
+| 10      | High npath complexity                                   | Critical     |
+| 11      | Must override hash with isEqual                         | Critical     |
+| 12      | Dead code                                               | Critical     |
+| 13      | Collapsible if statements                               | Critical     |
+| 14      | Short variable name                                     | Critical     |
+| 15      | Switch statements should have default                   | Critical     |
+| 16      | Replace with number literal                             | Major        |
+| 17      | Multiple unary operator                                 | Critical     |
+| 18      | Redundant local variable                                | n/a          |
+| 19      | Replace with container literal                          | Major        |
+| 20      | Jumbled incrementer                                     | Blocker      |
+| 21      | Redundant if statement                                  | Major        |
+| 22      | For loop should be while loop                           | Critical     |
+| 23      | Unused method parameter                                 | Minor        |
+| 24      | Missing break in switch statement                       | Blocker      |
+| 25      | Switch statements don't need default when fully covered | n/a          |
+| 26      | Long variable name                                      | Major        |
+| 27      | Empty try statement                                     | Critical     |
+| 28      | Bitwise operator in conditional                         | n/a          |
+| 29      | Redundant nil check                                     | Critical     |
+| 30      | Unused local variable                                   | Minor        |
+| 31      | Feature envy                                            | n/a          |
+| 32      | High cyclomatic complexity                              | Critical     |
+| 33      | Constant if expression                                  | Critical     |
+{:.mbtablestyle}
 
-We've created 10000 items at jsonStructure. So each level had 10 elements at sub-level. **topLevelCollection** had 10 **oneStepDownCollection** elements. **oneStepDownCollection** had 10 **twoStepDownCollection**. And so on till the bottom.  
+The reviewed rule’s severity is going to determine the priority of the
+related Technical Debt “interest payment”.
 
+Rule’s severity can be changed according to the Business needs.
 
-And we've got same result for Swift and ObjC version.  
-It took us **0.04** seconds to get all the 10000 articleID's values from the structure. 
+SQALE Rating Definition
+-----------------------
 
-On one hand I was a bit disappointed that Swift was not faster of the ObjC. But then I thought that Swift should not be faster then ObjC. Actually it should be same as ObjC. And I felt satisfied. 
+In order to relatively evaluate amount of Technical Debt in the project
+2 metrics were taken into the consideration:
 
-###6. Conclusion  
+-   Technical Debt Ratio
 
-To sum up Swift allows you to do all the same things KVC Collection Operations can. But in rather different way you've could expected. Yes you should learn some new tricks to work with data at Swift style. And they might look to complex to you comparing to ObjC KVC mechanism. One argument for increased code complexity is type safety. In case you've decided to change name of the property at JSON model Swift compiler will kindly remind you to update the property name at reduce function too. In comparison at ObjC collections operators are represented as a strings. And there is no way you can ensure that object has a property you referring to before you actually run the code and catch runtime exception.  
-So Swift lets you catch more errors at compile time. And waste less time at debugging.  
-On the other hand ObjC is so good for debugging purposes you can actually want to stick to the good old runtime introspection tricks. 
+-   SQALE Rating
 
-And as you can see Apple has given us two ways of doing same thing with the same performance. And it's up to you what method to be used to conquer the world) I just would not recommend you to try write Swift code at ObjC style and vice versa. So don't try to implement KVC at Swift. It might not fit to the language paradigm as well as it fitted to ObjC paradigm.
+Technical Debt Ratio - is the relationship between estimated technical
+debt amount and estimated project amount. For instance:
 
-###7. Resources
-* [Xcode project](https://github.com/andrewBatutin/SwiftDataManip)
-* [Functional programming explained with Haskell](http://learnyouahaskell.com/chapters)
+Technical Debt - 5 m/d
 
-##Thanks For Reading!
+Project Duration - 100 m/d
 
+Technical Debt Ratio = Technical Debt / Project Duration
 
+Technical Debt Ratio = 5 / 100 = 5%
+
+Technical Debt is calculated based on amount of violated Rules for a
+specific platform.
+
+Next table determines relationship between SQALE Rating and Technical
+Debt Ratio:
+
+| **SQALE Rating** | **Technical Debt Ratio** |
+|------------------|--------------------------|
+| A                | 0 - 5%                   |
+| B                | 5% - 10%                 |
+| C                | 10% - 20%                |
+| D                | 20% - 50%                |
+| E                | 50% - 100%               |
+{:.mbtablestyle}
+
+The relationship is the industrial standard set by SonarQube.
+
+The relationship can be reviewed according to the Business needs of the
+specific project.
+
+Conclusion
+----------
+
+SonarQube is using SQALE model to measure quality of the software
+product. SQALE model is the projection of the ISO 9126. This quality
+model is provides common quality metrics for the different platforms
+used in the project. Quality metrics are defined by the set of Quality
+Characteristics and platform specific pules sets. Priority of these
+parameters is based on conclusions of the Expert Team. And can be
+adjusted according to the Business needs.
+
+SQALE Rating and Technical Debt Ratio are cumulative metrics that can be
+used in order to evaluate project quality and compare one project to
+another.
+
+This document can be used as a baseline for Vodoo project quality
+assessment.
+
+Reference Documents 
+--------------------
+
+  [The SQALE Method Definition Document; Author: Jean-Louis Letouzey Version: 1.0 January 27, 2012](http://www.sqale.org/wp-content/uploads/2010/08/SQALE-Method-EN-V1-0.pdf)
+  [The SQALE method for evaluating Technical Debt; Letouzey, J.-L.](http://www.sqale.org/wp-content/uploads/2012/04/SQALE-3RD-WS-on-MTD.pdf)
