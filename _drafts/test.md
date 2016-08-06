@@ -41,7 +41,7 @@ Vodoo project requirements:
 -   SQALE Rating definition
 
 Reviewing procedure was done by Expert Team. Expert Team consisted from
-iOS, Android, Web domains experts and CTL management staff.
+iOS, Android, Web domains experts and Vodoo management staff.
 
 SQALE Technical Debt Pyramid
 ----------------------------
