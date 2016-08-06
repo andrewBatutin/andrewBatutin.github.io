@@ -5,6 +5,10 @@ date:   2016-08-05 00:00:00
 categories: static code analysis
 ---
 
+Prefrace
+------------
+
+Below you can find sample of how SonarQube service can be calibrated for a need of a specific project. 
 
 Introduction
 ------------
@@ -28,7 +32,7 @@ definition of the right code. As well as calibrate the metrics to adjust
 project-specific parameters.
 
 In this document next SQALE elements will be reviewed taking in account
-CTL project requirements:
+Vodoo project requirements:
 
 -   SQALE Technical Debt Pyramid
 
@@ -58,7 +62,7 @@ According to ISO 9126 SQALE defines next Quality Model’s Characteristics
 {:.mbtablestyle}
 
 
-According to CTL project necessities Expert Team has defined next
+According to Vodoo project necessities Expert Team has defined next
 priorities for the Quality Characteristics
 
 
@@ -253,7 +257,7 @@ SQALE Rating and Technical Debt Ratio are cumulative metrics that can be
 used in order to evaluate project quality and compare one project to
 another.
 
-This document can be used as a baseline for CTL project quality
+This document can be used as a baseline for Vodoo project quality
 assessment.
 
 Reference Documents 
