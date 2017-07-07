@@ -16,3 +16,9 @@ paginate: 10
 
 gems: [jekyll-paginate]
 exclude: ['README.md', 'Gemfile.lock', 'Gemfile', 'Rakefile']
+
+defaults:
+  - scope:
+      path: "assets/img"
+    values:
+      image: true

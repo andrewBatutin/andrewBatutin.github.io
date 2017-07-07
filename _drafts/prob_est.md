@@ -1,14 +1,18 @@
-# Fast Estimation or Probabilistic Estimation Value
+---
+layout: post
+title:  "Fast & Accurate Estimation"
+date:   2017-07-07 07:07:07
+categories: project management
+---
 
-## Intro
-
-Fast estimations like fast food - cheap, crappy, greasy, but a necessary attribute of the everyday life.
+Introduction
+------------
+Fast estimations are like fast food - cheap, crappy, greasy, but a necessary attribute of the everyday life.
 
 Have you ever been in a position where you were tasked with creating an estimation for a software project you'd never heard before within 3 hours time frame?
 I was. It was tons of fun (sarcastic neurotic laugh)
 
 In this article, I try to describe approach you can use if you ever find yourself in such desperate hot-bed position
-
 
 ## What projects are we talking about?
 
@@ -37,33 +41,33 @@ If you are still willing to do that - then it must be an honest estimate.
 
 ### Precise
 
-Precise - it means that if you were tasked to estimate three similar projects we should get three alike estimation data. If one CMS for a medium-size retail company will take one man/year to implement, then another CMS for similar size company should not take five man/years or 3 dog/weeks to do.
+Precise - it means that if you were tasked to estimate three similar projects you should get three alike estimation data. If one CMS for a medium-size retail company will take one staff/year to implement, then another CMS for similar size company should not take five staff/years or 3 dog/weeks to do.
 
 Make sure your numbers are non-contradictory and don't raise the questions on your sanity or professionalism. About Screen can not take longer to implement than the front page of your app. Simple RESTFull service should not take longer to do then AI-based self-tuning self-espresso-making analytic service.
 
-Any eyebrows-lifting numbers at your estimate can undermine trust to your work. And without a trust to the estimate they worth nothing.
+Any eyebrows-lifting numbers at your estimate can undermine trust to your work. And without a trust an estimate worth nothing.
 
 Also, it's quite useful to do the reality check before you show your estimate to somebody else. If you were asked to make a toilet-locator app, it should not take three years to do that.
 
 ### Accuracy & Real World Conditions
 
-The estimate should be accurate. Which means the gap between estimated effort and actual effort should be minimal. If you say that the project should take three month - it's highly desirable that it actually will be ready within three weeks period.
+The estimate should be accurate. Which means the gap between estimated effort and actual effort should be minimal. If you say that the project should take three month - it's highly desirable that it actually will be ready within three month period.
 
 And accuracy is a really [tough cookie](http://coub.com/view/vc4p1). Mostly because estimation process is:
 
-- Time constrained
-  - You do not have a lot of time to make the estimate. Especially if we're talking about pre-sales activities. The salesman needs everything and now. No exceptions.
-- Information constrained
+- __Time constrained__
+  - You do not have a lot of time to make the estimate. Especially if we're talking about pre-sales activities. A saleshound needs everything and now. No exceptions.
+- __Information constrained__
   - You do not have full info to make the estimate. Sometimes you have just a paragraph worth of text. Sometimes just a napkin with your boss drunk handwriting on it. [GoogleIT(@)](http://www.justfuckinggoogleit.com/) can help. But mostly you will be in the severe information-deprived environment.
 
 And to get more info you need more time. Which you don't have.
 
 In addition
 
-![alt text](/Users/abatutin/Dropbox/SR_web/ch1.jpg "Time vs Accuracy")
+![estimation-complexity](/assets/img/ch1.jpg){:class="img-responsive"}
 
-  - estimation accuracy grows logarithmically
-  - estimation time effort increases exponentially
+  - __estimation accuracy grows logarithmically__
+  - __estimation time effort increases exponentially__
 
 Which means that even with a substantial time effort estimate still will have some degree of an error. And it can be quite big.
 
@@ -85,11 +89,11 @@ Before we go forwards let's define some units used to measure the estimate.
 
 Quite often staff-hour/day/month metric is used. It says how many hours/days/months will take one man to do the job.
 
-There are a couple of issues I find with that. First of all, not everybody is a man. Second, it always was a bit misleading for me. I always tend to imagine 1 staff-day like straight 8 hours coding sprint. Which is obviously unrealistic. Programmers don't code 100% of their time. Planning, meetings, coffee, frustrations - it all steals our precious workday time.
+It always was a bit misleading for me. I always tend to imagine 1 staff-day like straight 8 hours coding sprint. Which is obviously unrealistic. Programmers don't code 100% of their time. Planning, meetings, coffee, frustrations - it all steals our precious workday time.
 
-So for this article, I'm going to use Average Working Day (AWD) unit of measurement.
+So for this article, I'm going to use __Average Working Day (AWD)__ unit of measurement.
 
-Think about 1 AWD as the amount of work 1 average developer can accomplish during 1 day that consists of 5 hours of coding and 3 hours of talking to strangers in a closed room.
+Think about 1 AWD as an amount of work 1 average developer can accomplish during 1 day that consists of 5 hours of coding and 3 hours of talking to strangers in a closed room.
 
 Also, we usually don't work alone but in the team. And there is an age old issue of scaling the estimation according to the team size. See "9 Women Can’t Make a Baby in a Month" and [Brook's law](https://en.wikipedia.org/wiki/Brooks%27s_law) for details. But we'll omit those details for the sake of simplicity and will just assume that 2 humanoid creatures can accomplish 2 AWD in 1 day, 4 - at 0.5 days, etc...
 
@@ -101,25 +105,28 @@ Now let's discuss how exactly can we calculate probabilistic estimate value.
 
 The idea is simple - in order to estimate a project you break it on the work item and then estimate each item with 3 figures:
 
-- b = the best-case estimate (95% chance of missing)
-- n = the nominal estimate (50% chance of missing)
-- w = the worst-case estimate (5% chance of missing)
+- __b__ = the best-case estimate (95% chance of missing)
+- __n__ = the nominal estimate (50% chance of missing)
+- __w__ = the worst-case estimate (5% chance of missing)
 
-Think about best-case estimate as if Odin himself came down to the desk and forced the project with all his might and wisdom through. The best-case estimate is the smallest possible amount of time required to do the job within best possible circumstances. The item will take longer to implement with 95% chance.
+Think about best-case estimate as if Odin himself came down to the desk and forced the project with all his might and wisdom through. The best-case estimate is the smallest possible amount of time required to do the job within best possible circumstances. Most probably the item will take longer to implement then expected. You can think about it as your [Big-Omega](https://www.khanacademy.org/computing/computer-science/algorithms/asymptotic-notation/a/big-big-omega-notation) value.
 
-The nominal estimate is the most realistic one. Pay attention to this figure. It has the most weight in upcoming calculations. This estimate should be medium-optimistic value achievable under you normal working conditions. You have 50% chance of missing this estimate.
+The nominal estimate is the most realistic one. Pay attention to this figure. It has the most weight in upcoming calculations. This estimate should be medium-optimistic value achievable under you normal working conditions. You have 50% chance of missing this estimate. You can think about it as your [Big-Theta](https://www.khanacademy.org/computing/computer-science/algorithms/asymptotic-notation/a/big-big-theta-notation) value.
 
-The worst-case estimate is the one you should give for the case when everything goes wrong. Your laptop is attacked by a giant worm. Your design guy turns out to be a drug-addicted monkey. You've been called up to an army day before release. This is the worst possible figure you can give to the work item. And there is 5% chance that the item will take longer to implement than you've estimated.
+The worst-case estimate is the one you should give for the case when everything goes wrong. Your laptop is attacked by a giant worm. Your design guy turns out to be a drug-addicted monkey. You've been called up to an army day before release. This is the worst possible figure you can give to the work item. And there is 5% chance that the item will take longer to implement than you've estimated. You can think about it as your [Big-O](https://www.khanacademy.org/computing/computer-science/algorithms/asymptotic-notation/a/big-o-notation) value.
 
-Formally ```b < n < w``` should always be true. You can't have worst case estimate smaller than the nominal one. Sorry.
+Formally __b < n < w__ should always be true. You can't have worst case estimate smaller than the nominal one. Sorry.
 
 Let's take a look at the simple example to demonstrate the concept in action.
 
-#### Sample project requirements:
+## Sample project requirements:
 
 ```
-The web-service should allow the user to log in to an existing account.
-Buy the product from the predefined list of commodities. And review its purchase history.
+The web-service should allow a user to log in to an existing account.
+
+Buy the product from the predefined list of commodities.
+
+And review its purchase history.
 ```
 
 Let us assume we have extracted 3 work items from this description.
@@ -130,7 +137,10 @@ Let us assume we have extracted 3 work items from this description.
 | 2        | Purchase Commodity |
 | 3        | Purchase History   |
 
-#### Sample three-point estimate.
+
+
+
+## Sample three-point estimate.
 
 Let's assume we've estimated those work items in the next fashion.
 
@@ -142,15 +152,15 @@ Let's assume we've estimated those work items in the next fashion.
 
 *all estimate values are in AWD*
 
-#### [Standard Deviation](https://en.wikipedia.org/wiki/Standard_deviation) and [Weighted Mean](https://en.wikipedia.org/wiki/Weighted_arithmetic_mean) of the Estimate
+## Estimate [Standard Deviation](https://en.wikipedia.org/wiki/Standard_deviation) and [Weighted Mean](https://en.wikipedia.org/wiki/Weighted_arithmetic_mean)
 
-Mean effort for each work item is calculated as a weighted mean  as:
+Mean effort for each work item is calculated as a weighted mean:
 
 ```
 m = (b + 4n + w)/6
 ```
 
-Why do we have the factor of 4 for nominal effort? Because it's the most realistic one. And we want to emphasize it most. Why 4 but not 5 or 3 - because of [Rocket Science](https://stackoverflow.com/a/22241069).
+Why do we have the factor of 4 for nominal effort? Because it's the most realistic effort. And we want to emphasize it mostly. Why 4 but not 5 or 3 - because of the [Rocket Science](https://stackoverflow.com/a/22241069).
 
 It's just a fancy way to get average effort value prioritizing nominal estimate above others. For total project mean we just sum up work item's mean values.
 
@@ -191,7 +201,7 @@ Standard deviation says how variative your estimate values are. Higher it is - m
 
 These numbers we need to be able to approximate our estimation data with Beta-distribution. And thus calculate our probabilistic estimation value.
 
-#### Beta-distribution
+## Beta-distribution
 
 In order to get the probability of the estimate, I've chosen to use [Beta-distribution](https://en.wikipedia.org/wiki/Beta_distribution). Why Beta-D - because it's used within [PERT](https://en.wikipedia.org/wiki/Program_evaluation_and_review_technique).
 
@@ -201,7 +211,7 @@ In general, it calculates the probability based on your mean and standard deriva
 
 For the Sample Project, we'll have next cumulative beta-D
 
-![alt text](/Users/abatutin/Dropbox/SR_web/cum.png "Cumulative Sample Project Beta-Distribution")
+![bets-d](/assets/img/cum.png){:class="img-responsive"}
 
 The way to read this chart is next: the project will take about 177 AWD to be done with 95% chance of success.
 
@@ -215,14 +225,16 @@ Here is a little table:
 
 If you compare it with the mean value (102 AWD), you'll see why you shouldn't just use mean value as your final estimate.
 
-So here it is - your Probabilistic Estimation Value.
+So here it is - your __Probabilistic Estimation Value__.
 
-##### Estimation Range
+## Estimation Range
 
 If you're not comfortable with all that probability stuff then you might just give a range value using next rule:
 
 ```
-The 95% confidence interval for the true project work time is approximately Project Total Mean ± 2 × Project Standard Deviation
+The 95% confidence interval for the true project work time is approximately:
+
+Project Total Mean ± 2 × Project Standard Deviation
 ```
 
 We use the factor of 2 based on [68–95–99.7 rule](https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule).
@@ -231,17 +243,17 @@ So for the sample project, it will be: It will take from 21 to 183 days.
 
 Or you can drop the lower bound and just say: It will take from 102 to 183 days.
 
-Of course, you can use ```Total Mean ± 1 × Project Standard Deviation``` formula but please note that then you're talking about 68% chance of fitting into the range.
+Of course, you can use __Total Mean ± 1 × Project Standard Deviation__ formula but please note that then you're talking about 68% chance of fitting into the range.
 
 ## Sample Excel Workbook
 
-You can find [here](sds) Excel book with sample project estimation. Use it for good:)
+You can find [here]({{ site.url }}/download/SampleProjectProbEst.xlsx) Excel book with sample project estimation. Use it for good:)
 
 ## Additional requirements
 
 Make sure you've defined work items as independent as possible.
 
-Also, it's recommended to have 20 work items or more to get the adequate result.
+Also, it's recommended to have about 20 work items or more to get the adequate result.
 
 ## Conclusion
 
@@ -250,5 +262,7 @@ Estimation of the software project is far from exact science. And it will never 
 ## P.S.
 
 After I've done a couple of estimations, I've decided to calculate their actual accuracy. I wanted to calculate the error between estimated and actual project development effort. And I was not able to do that. Some of the estimated projects were not launched. Other transformed during the dev process so much that it was not possible to match their's duration against original work items.
+
 And I have a strong suspicion that this is not a coincidence. Software development is a highly volatile process. Rarely the system you've planned comes up the way you imagined it at the beginning. Thus calculating the accuracy of your original estimate is virtually impossible. You might be able to figure out estimation accuracy for some work items. But hardly you can get the actual estimate accuracy for the entire project.
-So how should you estimate software projects to get verifiable results? Good question. I don't know) Look [here](https://getpocket.com/a/read/1094154281) for one of the ideas. But it's still very much an open question.
+
+So how should you estimate software projects to get verifiable results? Good question. I don't know) Look [here](http://www.yegor256.com/2015/06/02/how-to-estimate-software-cost.html) for one of the ideas. But it's still very much an open question.
